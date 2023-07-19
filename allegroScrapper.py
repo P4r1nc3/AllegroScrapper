@@ -1,6 +1,6 @@
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from bs4 import BeautifulSoup
 
 class AuctionScraper:
     def __init__(self):
@@ -33,6 +33,67 @@ class AuctionScraper:
             print('No element with the specified class name found.')
             return None
 
+class HtmlGenerator:
+    def __init__(self, url_list):
+        self.url_list = url_list
+
+    def scrape_auction_data(self):
+        auction_data = []
+        for url in self.url_list:
+            scraper = AuctionScraper()
+            auction_name = scraper.get_auction_name(url)
+            auction_price = scraper.get_auction_price(url)
+
+            if auction_name and auction_price:
+                auction_data.append((auction_name, auction_price, url))
+
+        return auction_data
+
+    def generate_table_html(self, auction_data):
+        table_rows = []
+        for auction in auction_data:
+            auction_name, auction_price, url = auction
+            row = f'<tr><td>{auction_name}</td><td>{auction_price}</td><td><a href="{url}">Link</a></td></tr>'
+            table_rows.append(row)
+
+        table_html = '<table class="table">'
+        table_html += '<thead><tr><th>Name</th><th>Price</th><th>Link</th></tr></thead>'
+        table_html += '<tbody>'
+        table_html += ''.join(table_rows)
+        table_html += '</tbody></table>'
+
+        return table_html
+
+    def generate_html_file(self):
+        auction_data = self.scrape_auction_data()
+        table_html = self.generate_table_html(auction_data)
+
+        # Formatting the HTML using BeautifulSoup
+        template_html = f'''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Auction Table</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        </head>
+        <body>
+            <div class="container">
+                <h1>Auction Table</h1>
+                {table_html}
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+        </html>
+        '''
+
+        # Saving the formatted HTML to the file
+        soup = BeautifulSoup(template_html, 'html.parser')
+        with open('index.html', 'w', encoding='utf-8') as file:
+            file.write(str(soup))
+
+        print("HTML file 'index.html' has been generated.")
 
 if __name__ == "__main__":
     url_list = [
@@ -41,49 +102,6 @@ if __name__ == "__main__":
         'https://allegro.pl/oferta/hunt-showdown-steam-nowa-gra-pelna-wersja-pc-pl-11106874677?bi_s=ads&bi_m=showitem:desktop:top:active&bi_c=NjQ0Mjg4ZGMtOTQ5Zi00ZWVlLWJkMmEtMTc2YzNiMTFiODdmAA&bi_t=ape&referrer=proxy&emission_unit_id=68c898a2-7a16-4b74-ac5a-1b5ac24db8e5'
     ]
 
-    # Scrapping data of auction and generating rows of the table
-    auction_data = []
-    for url in url_list:
-        scraper = AuctionScraper()
-        auction_name = scraper.get_auction_name(url)
-        auction_price = scraper.get_auction_price(url)
-
-        if auction_name and auction_price:
-            auction_data.append((auction_name, auction_price, url))
-
-    # Generating HTML for the table
-    table_html = '<table class="table">'
-    table_html += '<thead><tr><th>Name</th><th>Price</th><th>Link</th></tr></thead>'
-    table_html += '<tbody>'
-    for auction in auction_data:
-        auction_name, auction_price, url = auction
-        table_html += f'<tr><td>{auction_name}</td><td>{auction_price}</td><td><a href="{url}">Link</a></td></tr>'
-    table_html += '</tbody></table>'
-
-    # Formatting the HTML using BeautifulSoup
-    template_html = f'''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Auction Table</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    </head>
-    <body>
-        <div class="container">
-            <h1>Auction Table</h1>
-            {table_html}
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
-    '''
-
-    # Saving the formatted HTML to the file
-    soup = BeautifulSoup(template_html, 'html.parser')
-    with open('index.html', 'w', encoding='utf-8') as file:
-        file.write(soup.prettify())
-
-    print("HTML file 'index.html' has been generated.")
+    html_generator = HtmlGenerator(url_list)
+    html_generator.generate_html_file()
 
