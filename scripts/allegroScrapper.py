@@ -90,7 +90,7 @@ class HtmlGenerator:
 
         # Saving the formatted HTML to the file
         soup = BeautifulSoup(template_html, 'html.parser')
-        with open('index.html', 'w', encoding='utf-8') as file:
+        with open('../index.html', 'w', encoding='utf-8') as file:
             file.write(str(soup))
 
         print("HTML file 'index.html' has been generated.")
