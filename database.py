@@ -21,7 +21,7 @@ class DatabaseManager:
         self.conn.commit()
 
     def get_all_auction_data(self):
-        select_query = "SELECT name, price, url FROM auctions"
+        select_query = "SELECT id, name, price, url FROM auctions"
         self.cursor.execute(select_query)
-        auction_data = [{'name': name, 'price': price, 'url': url} for (name, price, url) in self.cursor]
+        auction_data = [{'id': id, 'name': name, 'price': price, 'url': url} for (id, name, price, url) in self.cursor]
         return auction_data
