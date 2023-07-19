@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
 
 class AuctionScraper:
     def __init__(self):
@@ -40,23 +41,26 @@ if __name__ == "__main__":
         'https://allegro.pl/oferta/hunt-showdown-steam-nowa-gra-pelna-wersja-pc-pl-11106874677?bi_s=ads&bi_m=showitem:desktop:top:active&bi_c=NjQ0Mjg4ZGMtOTQ5Zi00ZWVlLWJkMmEtMTc2YzNiMTFiODdmAA&bi_t=ape&referrer=proxy&emission_unit_id=68c898a2-7a16-4b74-ac5a-1b5ac24db8e5'
     ]
 
-    # Generating HTML for the table
-    table_html = '<table class="table">'
-    table_html += '<thead><tr><th>Name</th><th>Price</th><th>Link</th></tr></thead>'
-    table_html += '<tbody>'
-
     # Scrapping data of auction and generating rows of the table
+    auction_data = []
     for url in url_list:
         scraper = AuctionScraper()
         auction_name = scraper.get_auction_name(url)
         auction_price = scraper.get_auction_price(url)
 
         if auction_name and auction_price:
-            table_html += f'<tr><td>{auction_name}</td><td>{auction_price}</td><td><a href="{url}">Link</a></td></tr>'
+            auction_data.append((auction_name, auction_price, url))
 
+    # Generating HTML for the table
+    table_html = '<table class="table">'
+    table_html += '<thead><tr><th>Name</th><th>Price</th><th>Link</th></tr></thead>'
+    table_html += '<tbody>'
+    for auction in auction_data:
+        auction_name, auction_price, url = auction
+        table_html += f'<tr><td>{auction_name}</td><td>{auction_price}</td><td><a href="{url}">Link</a></td></tr>'
     table_html += '</tbody></table>'
 
-    # Generating HTML for website
+    # Formatting the HTML using BeautifulSoup
     template_html = f'''
     <!DOCTYPE html>
     <html>
@@ -76,8 +80,10 @@ if __name__ == "__main__":
     </html>
     '''
 
-    # Save Generated HTML to the file
+    # Saving the formatted HTML to the file
+    soup = BeautifulSoup(template_html, 'html.parser')
     with open('index.html', 'w', encoding='utf-8') as file:
-        file.write(template_html)
+        file.write(soup.prettify())
 
     print("HTML file 'index.html' has been generated.")
+
