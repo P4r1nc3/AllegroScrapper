@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from auction import AuctionScraper
 from database import DatabaseManager
 
@@ -21,6 +21,7 @@ def index():
     if request.method == 'POST':
         url = request.form['url']
         sort_option = request.form['sort_option']  # Update sort_option here
+
         if url:
             scraper = AuctionScraper()
             name, price = scraper.get_auction_data(url)
@@ -32,6 +33,12 @@ def index():
     auction_data = db_manager.get_all_auction_data(sort_option)
 
     return render_template('index.html', auction_data=auction_data, sort_options=sort_options, current_sort=sort_option)
+
+@app.route('/delete/<int:auction_id>', methods=['POST'])
+def delete_auction(auction_id):
+    db_manager = DatabaseManager()
+    db_manager.delete_auction(auction_id)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(port=8080, debug=True)

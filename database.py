@@ -35,3 +35,9 @@ class DatabaseManager:
         self.cursor.execute(select_query)
         auction_data = [{'id': id, 'name': name, 'price': price, 'url': url} for (id, name, price, url) in self.cursor]
         return auction_data
+
+    def delete_auction(self, auction_id):
+        delete_query = "DELETE FROM auctions WHERE id = %s"
+        data = (auction_id,)
+        self.cursor.execute(delete_query, data)
+        self.conn.commit()

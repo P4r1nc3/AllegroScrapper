@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Auction Data Scraper</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
@@ -12,6 +13,7 @@
             <div class="input-group">
                 <label for="url" class="input-group-text">Enter Auction URL:</label>
                 <input type="text" id="url" name="url" class="form-control" required>
+                <input type="hidden" name="sort_option" value="{{ current_sort }}">
                 <button type="submit" class="btn btn-primary">Add</button>
             </div>
         </form>
@@ -32,23 +34,29 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Link</th>
+                     <th>ID</th>
+                     <th>Name</th>
+                     <th>Price</th>
+                     <th>Link</th>
+                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for auction in auction_data %}
                 <tr>
-                    <td>{{ auction.id }}</td>
-                    <td>{{ auction.name }}</td>
-                    <td>{{ auction.price }}</td>
-                    <td><a href="{{ auction.url }}" class="btn btn-primary" target="_blank">Link</a></td>
+                     <td>{{ auction.id }}</td>
+                     <td>{{ auction.name }}</td>
+                     <td>{{ auction.price }}</td>
+                     <td><a href="{{ auction.url }}" class="btn btn-primary" target="_blank">Link</a></td>
+                     <td>
+                         <form method="POST" action="/delete/{{ auction.id }}" onsubmit="return confirm('Are you sure you want to delete this auction?');">
+                             <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i></button>
+                         </form>
+                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+         </table>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
