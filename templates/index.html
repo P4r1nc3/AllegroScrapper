@@ -11,7 +11,8 @@
             gap: 8px;
         }
         .link-btn,
-        .delete-btn {
+        .delete-btn,
+        .chart-btn {
             width: 40px;
             height: 40px;
             display: flex;
@@ -20,7 +21,9 @@
             border-radius: 50%;
         }
         .link-btn i,
-        .delete-btn i {
+        .delete-btn i,
+        .chart-btn i {
+
             line-height: 1;
         }
         .link-btn {
@@ -28,6 +31,9 @@
         }
         .delete-btn {
             background-color: #dc3545;
+        }
+        .chart-btn {
+            background-color: #28a745;
         }
     </style>
 </head>
@@ -71,10 +77,11 @@
                      <td>{{ auction.name }}</td>
                      <td>{{ auction.price }}</td>
                      <td class="btn-container">
-                        <a href="{{ auction.url }}" class="btn btn-primary link-btn" target="_blank"><i class="fa-solid fa-link"></i></a>
-                        <form method="POST" action="/delete/{{ auction.id }}" onsubmit="return confirm('Are you sure you want to delete this auction?');">
-                            <button type="submit" class="btn btn-danger delete-btn"><i class="fas fa-times"></i></button>
+                         <a href="{{ auction.url }}" class="btn btn-primary link-btn" target="_blank"><i class="fa-solid fa-link"></i></a>
+                         <form method="POST" action="/delete/{{ auction.id }}" onsubmit="return confirm('Are you sure you want to delete this auction?');">
+                             <button type="submit" class="btn btn-danger delete-btn"><i class="fas fa-times"></i></button>
                         </form>
+                         <a href="#" class="btn btn-success chart-btn"><i class="fa-solid fa-chart-line"></i></a>
                      </td>
                 </tr>
                 {% endfor %}
